@@ -9,6 +9,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const RecordCount = 100
+
 func main() {
 	db, err := sqlx.Connect("postgres", "host=localhost port=5432 user=dev dbname=postgres password=pass sslmode=disable")
 	if err != nil {
@@ -61,7 +63,7 @@ func migrate(db *sqlx.DB) {
 }
 
 func insert(db *sqlx.DB) {
-	for i := 1; i <= 100; i++ {
+	for i := 1; i <= RecordCount; i++ {
 		now := time.Now()
 		// データを登録
 		db.MustExec("INSERT INTO users(created_at, updated_at, name) VALUES ($1, $2, $3)", now, now, fmt.Sprintf("sqlx_test_user_%03d", i))
@@ -69,7 +71,7 @@ func insert(db *sqlx.DB) {
 }
 
 func selectAndUpdate(db *sqlx.DB) {
-	for i := 1; i <= 100; i++ {
+	for i := 1; i <= RecordCount; i++ {
 		var u User
 		// データを取得
 		if err := db.Get(&u, "SELECT * FROM users WHERE id=$1", i); err != nil {
@@ -82,7 +84,7 @@ func selectAndUpdate(db *sqlx.DB) {
 }
 
 func selectAndDelete(db *sqlx.DB) {
-	for i := 1; i <= 100; i++ {
+	for i := 1; i <= RecordCount; i++ {
 		// データを更新
 		db.MustExec("DELETE FROM users WHERE id = $1", i)
 	}
